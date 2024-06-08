@@ -60,6 +60,10 @@ app.post("/api/persons", (request, response) => {
       error: "content missing",
     });
   }
+  const [people] = persons.map((person) => person.name.toLowerCase());
+
+  if (people.includes(name.toLowerCase()))
+    return response.status(400).json({ error: "name must be unique" });
   persons = persons.concat(data);
   response.json(persons);
 });
