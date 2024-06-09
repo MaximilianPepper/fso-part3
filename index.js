@@ -25,24 +25,25 @@ app.get("/api/persons", (request, response, next) => {
     .catch((error) => next(error));
 });
 
-// this currently doesnt work because it doesnt interact with db
-app.get("/info", (request, response) => {
-  const data = `Phonebook has info for ${
-    persons.length
-  } people <br/> ${new Date()}`;
-  response.send(data);
-  console.log("test");
+app.get("/info", (request, response, next) => {
+  Person.countDocuments({})
+    .then((amount) =>
+      response.send(`Phonebook has info for ${amount}
+  ${amount === 1 ? "person" : "people"} <br/> ${new Date()}`)
+    )
+    .catch((error) => next(erorr));
 });
 
-// outdated
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((p) => p.id === id);
-  person ? response.json(person) : response.status(404).end();
+// search for id (either manually or go /request/find_id.rest to test)
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id)
+    .then((person) =>
+      person ? response.json(person) : response.status(404).end()
+    )
+    .catch((error) => next(error));
 });
 
 app.delete("/api/persons/:id", (request, response, next) => {
-  const id = Number(request.params.id);
   Person.findByIdAndDelete(request.params.id)
     .then((res) => response.status(204).end())
     .catch((error) => next(error));
@@ -62,6 +63,13 @@ app.post("/api/persons", (request, response, next) => {
     .then((newPerson) => response.json(newPerson))
     .catch((error) => next(error));
 });
+
+app.put("/api/persons/:id", (request, response, next) => {
+  Person.findByIdAndUpdate(request.params.id, request.body)
+    .then((updatedP) => response.json(updatedP).end())
+    .catch((error) => next(error));
+});
+
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
