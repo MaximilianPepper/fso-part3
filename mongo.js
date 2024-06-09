@@ -4,7 +4,7 @@ const { MongoClient, ServerApiVersion } = require("mongodb");
 const mongoose = require("mongoose");
 
 const password = process.argv[2];
-const url = `mongodb+srv://fullstack:${password}@cluster0.g8xyl1a.mongodb.net/persons?retryWrites=true&w=majority&appName=Cluster0`;
+const url = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 

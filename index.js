@@ -1,3 +1,5 @@
+require("dotenv").config();
+const Person = require("./models/persons");
 const express = require("express");
 const app = express();
 var morgan = require("morgan");
@@ -15,7 +17,7 @@ app.use(
   morgan(":method :status :res[content-length] - :response-time ms :body")
 );
 
-let persons = [
+/*let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -36,10 +38,12 @@ let persons = [
     name: "Mary Poppendieck",
     number: "39-23-6423122",
   },
-];
+];*/
 
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((persons) => {
+    response.json(persons);
+  });
 });
 
 app.get("/info", (request, response) => {
@@ -65,22 +69,21 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const { name, number } = request.body;
-  const data = { id: getId(), name: name, number: number };
-
+  const person = new Person({ name: name, number: number });
   if (!name || !number) {
     return response.status(400).json({
       error: "content missing",
     });
   }
-  const [people] = persons.map((person) => person.name.toLowerCase());
+  //const [people] = persons.map((person) => person.name.toLowerCase());
 
-  if (people.includes(name.toLowerCase()))
-    return response.status(400).json({ error: "name must be unique" });
-  persons = persons.concat(data);
-  response.json(data); // before was persons but it was adding the default 4 people
+  //if (people.includes(name.toLowerCase()))
+  //return response.status(400).json({ error: "name must be unique" });
+
+  person.save().then((newPerson) => response.json(newPerson));
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
