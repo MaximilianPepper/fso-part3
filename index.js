@@ -13,7 +13,7 @@ morgan.token("body", (req) => {
   return JSON.stringify(req.body);
 });
 
-// Use Morgan middleware with the custom token
+// Morgan middleware
 app.use(
   morgan(
     ":method :url :status :param[id] :res[content-length] - :response-time ms :body"
