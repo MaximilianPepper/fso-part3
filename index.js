@@ -31,7 +31,7 @@ app.get("/info", (request, response, next) => {
       response.send(`Phonebook has info for ${amount}
   ${amount === 1 ? "person" : "people"} <br/> ${new Date()}`)
     )
-    .catch((error) => next(erorr));
+    .catch((error) => next(error));
 });
 
 // search for id (either manually or go /request/find_id.rest to test)
