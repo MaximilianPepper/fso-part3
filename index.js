@@ -1,9 +1,21 @@
 const express = require("express");
 const app = express();
 var morgan = require("morgan");
-app.use(morgan("tiny"));
-
 app.use(express.json());
+
+morgan.token("param", (req, res, param) => {
+  return req.params[param];
+});
+morgan.token("body", (req) => {
+  return JSON.stringify(req.body);
+});
+
+// Use Morgan middleware with the custom token
+app.use(
+  morgan(
+    ":method :url :status :param[id] :res[content-length] - :response-time ms :body"
+  )
+);
 
 let persons = [
   {
