@@ -5,19 +5,14 @@ const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
+// middleware for frontend
+app.use(express.static("dist"));
 
-morgan.token("param", (req, res, param) => {
-  return req.params[param];
+morgan.token("body", (req, res) => {
+  return req.method === "POST" ? JSON.stringify(req.body) : "";
 });
-morgan.token("body", (req) => {
-  return JSON.stringify(req.body);
-});
-
-// Morgan middleware
 app.use(
-  morgan(
-    ":method :url :status :param[id] :res[content-length] - :response-time ms :body"
-  )
+  morgan(":method :status :res[content-length] - :response-time ms :body")
 );
 
 let persons = [
@@ -82,7 +77,7 @@ app.post("/api/persons", (request, response) => {
   if (people.includes(name.toLowerCase()))
     return response.status(400).json({ error: "name must be unique" });
   persons = persons.concat(data);
-  response.json(persons);
+  response.json(data); // before was persons but it was adding the default 4 people
 });
 
 const PORT = process.env.PORT || 3001;
